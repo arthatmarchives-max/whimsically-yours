@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>whimsically yours</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF9F3;--card:#FFF4C9;--ink:#3A3220;--muted:#7D7458;--line:#F0E2A6;
+  --yes:#F2D973;--no:#FFF6D6;--again:#E9CE82;--accent:#D9A93A;--onseg:#3A3220;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Nunito Sans",system-ui,sans-serif;font-size:17px;line-height:1.5}
+.app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:20px 20px 0}
+header{text-align:center;padding:8px 0 4px}
+.logo{width:68px;height:68px;display:block;margin:0 auto 6px}
+.logo .leaf{fill:var(--yes);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+h1{font-family:Marcellus,Georgia,serif;font-weight:400;font-size:1.7rem;letter-spacing:.03em;margin:0}
+header p{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 0 24px}
+section{display:none;text-align:center}
+section.on{display:block}
+h2{font-family:Marcellus,Georgia,serif;font-weight:400;font-size:1.5rem;margin:0 0 6px}
+.hint{color:var(--muted);margin:0 0 18px}
+.wheelwrap{position:relative;width:min(300px,78vw);margin:0 auto 20px;aspect-ratio:1}
+.wheelwrap svg{width:100%;height:100%;display:block}
+#wheelsvg{transform-origin:50% 50%;transition:transform 4.2s cubic-bezier(.12,.7,.1,1)}
+.pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:24px solid var(--ink);z-index:2}
+.hub{position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:var(--card);border:3px solid var(--ink);z-index:1}
+button{font:inherit;cursor:pointer;border:0}
+.btn{background:var(--ink);color:var(--bg);padding:13px 30px;border-radius:999px;font-weight:600}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);padding:10px 22px;margin-left:8px}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.answer{min-height:2.6rem;font-family:Marcellus,Georgia,serif;font-size:2rem;margin:0 0 14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 22px;margin:0 0 20px;min-height:150px;display:flex;flex-direction:column;justify-content:center}
+.quote{font-family:Marcellus,Georgia,serif;font-size:1.45rem;line-height:1.4;margin:0}
+.todo{font-family:Marcellus,Georgia,serif;font-size:1.6rem;line-height:1.3;margin:0 0 10px}
+.why{color:var(--muted);margin:0;font-size:.98rem}
+.empty{color:var(--muted);margin:0}
+nav{position:sticky;bottom:0;display:flex;gap:4px;background:var(--bg);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));margin:0 -20px}
+nav button{flex:1;background:none;color:var(--muted);padding:10px 4px;font-weight:600;border-radius:12px}
+nav button[aria-selected="true"]{color:var(--ink);box-shadow:inset 0 -3px 0 var(--accent)}
+.note{font-size:.82rem;color:var(--muted);margin:14px 0 0}
+.toast{min-height:1.4rem;font-size:.9rem;color:var(--muted);margin-top:10px}
+@media (prefers-reduced-motion:reduce){#wheelsvg{transition-duration:.6s}}
+</style>
+
+<meta name="theme-color" content="#FBF9F3">
+<meta name="description" content="A little wheel, a line for this moment, and one small thing to do right now.">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <svg class="logo" viewBox="0 0 100 100" role="img" aria-label="whimsically yours clover logo"><defs><path id="lf" d="M0 0 C-3 -3 -17 -10 -17 -22 C-17 -30 -7 -33 0 -25 C7 -33 17 -30 17 -22 C17 -10 3 -3 0 0Z"/></defs><path d="M50 54 C50 66 54 76 62 84" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/><g transform="translate(50 54)"><use href="#lf" class="leaf"/><use href="#lf" class="leaf" transform="rotate(120)"/><use href="#lf" class="leaf" transform="rotate(240)"/></g></svg>
+    <h1>whimsically yours</h1>
+    <p>Ask, listen, then do the next small thing.</p>
+  </header>
+  <main>
+    <section id="tab-wheel" class="on" role="tabpanel">
+      <h2>Ask the wheel</h2>
+      <p class="hint">Hold your question in mind, then spin.</p>
+      <div class="wheelwrap">
+        <div class="pointer"></div>
+        <svg id="wheelsvg" viewBox="-160 -160 320 320" aria-hidden="true"><g id="wheel"></g></svg>
+        <div class="hub"></div>
+      </div>
+      <p class="answer" id="answer" aria-live="polite"></p>
+      <button class="btn" id="spin">Spin</button>
+      <p class="note">For reflection and fun, not major life decisions.</p>
+    </section>
+
+    <section id="tab-quote" role="tabpanel">
+      <h2>A line for this moment</h2>
+      <p class="hint">Tap for a new one.</p>
+      <div class="panel"><p class="quote" id="quote">Tap below to receive a line.</p></div>
+      <button class="btn" id="newQuote">New line</button>
+      <button class="btn ghost" id="shareQuote">Share</button>
+      <div class="toast" id="toast1" aria-live="polite"></div>
+    </section>
+
+    <section id="tab-mystery" role="tabpanel">
+      <h2>What to do right now</h2>
+      <p class="hint">Instead of replaying the thought, take one small step.</p>
+      <div class="panel" id="mysteryPanel"><p class="empty">Take a breath, then reveal your next step.</p></div>
+      <button class="btn" id="reveal">Reveal</button>
+      <button class="btn ghost" id="shareAct" hidden>Share</button>
+      <div class="toast" id="toast2" aria-live="polite"></div>
+    </section>
+  </main>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="wheel">Wheel</button>
+    <button role="tab" aria-selected="false" data-tab="quote">Quotes</button>
+    <button role="tab" aria-selected="false" data-tab="mystery">Mystery</button>
+  </nav>
+</div>
+<script>
+const SEGS=[["Yes","--yes"],["No","--no"],["Yes","--yes"],["No","--no"],["Ask again","--again"],["Yes","--yes"],["No","--no"],["Ask again","--again"]];
+const QUOTES=[
+  "Perhaps the delay isn’t asking you to wait. Perhaps it’s asking you to notice what waiting has become.",
+  "Some doors close so quietly that you spend months knocking on a memory.",
+  "You can miss something and still know that returning would cost you a little more of yourself.",
+  "Maybe the sign you wanted was never an answer. Maybe it was the moment you finally asked.",
+  "Not every silence is a goodbye. But not every silence deserves your translation.",
+  "The sky doesn’t apologise for being cloudy. Why must you explain every season of your heart?",
+  "What if you’re not lost? What if you’re simply somewhere your old map cannot recognise?",
+  "There are things you outgrow before your heart learns how to stop reaching for them.",
+  "Perhaps today isn’t the day everything changes. Perhaps it’s the day you change one small thing.",
+  "A wish can live inside you long after the world has stopped making room for it.",
+  "Sometimes the answer arrives as a strange calm where the question used to live.",
+  "You don’t have to turn every coincidence into a promise. Some moments are beautiful without predicting anything.",
+  "Maybe the waiting feels endless because you’ve made the ending the only place you’re willing to live.",
+  "Even the moon has nights when you cannot see what remains of it.",
+  "There is a difference between trusting the unknown and asking it to guarantee your happiness.",
+  "What if that little ache is not asking you to go back, but to listen differently?",
+  "Some things leave your life before they leave your imagination. Be gentle with the distance between the two.",
+  "You were a whole person before that wish learned your name.",
+  "Perhaps the world hasn’t gone quiet. Perhaps your thoughts have simply been speaking over everything else.",
+  "A closed door can be an ending without becoming a verdict on your worth.",
+  "The smallest shift in your day might not change your destiny. It might change how you meet this moment.",
+  "You can believe in signs and still give yourself permission to choose.",
+  "Not everything that feels familiar is meant to feel like home.",
+  "There are mornings when healing looks suspiciously like making your bed and beginning again.",
+  "Maybe your intuition is the quiet voice beneath the fear, not the loudest feeling in the room.",
+  "Some wishes soften with time. Others teach you what your heart has been hungry for.",
+  "You don’t need to understand the entire sky to notice one beautiful cloud.",
+  "What if nothing is being taken from you in this moment? What if this moment is simply passing?",
+  "The heart can keep a place for someone without building its entire life around their return.",
+  "Sometimes peace begins when you stop asking the same question in a hundred different ways.",
+  "A coincidence can be a lovely little interruption, even when it has no secret message.",
+  "You may be waiting for life to give you a sign while life is waiting for you to look around.",
+  "Some chapters end in the middle of a sentence. You are still allowed to write what comes next.",
+  "The fact that you wanted it deeply does not mean you imagined its importance. It means you felt something real.",
+  "Maybe the path isn’t hidden. Maybe you’re trying to see the whole journey from where you stand.",
+  "You can be grateful for what a feeling taught you and still let the feeling change.",
+  "A little uncertainty doesn’t make your next step less yours.",
+  "Perhaps the universe feels mysterious because life is still unfolding, not because every moment must contain a clue.",
+  "You don’t have to chase a moment to prove that it mattered.",
+  "Some days, the most meaningful thing you can do is return to the life happening around you.",
+  "If the answer hasn’t arrived, your afternoon is still allowed to be beautiful.",
+  "Maybe the right timing begins with no longer abandoning yourself while you wait.",
+  "You are allowed to find wonder in the ordinary without asking it to promise you anything.",
+  "A feeling can be true without being a forecast.",
+  "For now, let the question rest beside you. It doesn’t have to sit in the centre of everything."
+];
+const ACTS=[
+  ["Take three slow breaths and let your shoulders soften.","Your body deserves a moment outside the conversation happening in your head."],
+  ["Drink a glass of water without looking at your phone.","A small physical ritual can bring your attention back to the moment you’re actually in."],
+  ["Look out of a window and notice the shape of one cloud.","The sky offers something to notice that doesn’t need an answer."],
+  ["Stretch both arms above your head, then let them fall naturally.","Sometimes the body needs a little room before the mind can find its own."],
+  ["Put one hand over your heart and sit quietly for twenty seconds.","Gentle attention can make a difficult feeling easier to acknowledge without arguing with it."],
+  ["Name three things you can see, two you can hear, and one you can feel.","Your senses can guide you out of an imagined future and back into the present."],
+  ["Stand up and slowly roll your shoulders five times.","A small change in posture can interrupt the stillness of a repeating thought."],
+  ["Wash your hands slowly and notice the temperature of the water.","A familiar routine can become a little doorway back to now."],
+  ["Step outside or stand near an open window for one minute.","A change of air and scenery gives your attention somewhere new to settle."],
+  ["Unclench your jaw and let your tongue rest naturally.","You may be holding tension without realising it; noticing is enough for this moment."],
+  ["Walk around the room once without carrying your phone.","A little movement can give a restless mind a different rhythm to follow."],
+  ["Take a comfortable breath and make the exhale slightly longer.","A gentle, unforced exhale can help you settle into the present."],
+  ["Touch a nearby surface and notice whether it feels smooth, rough, warm, or cool.","One real sensation can be a welcome interruption to a world of imagined possibilities."],
+  ["Sit with both feet resting on the floor for thirty seconds.","Feeling the ground beneath you gives your attention something steady to return to."],
+  ["Reach up, stretch gently to each side, and return to centre.","Your body can have a small change of scenery even when you cannot leave the room."],
+  ["Blink slowly and let your eyes rest on something far away.","Looking beyond the nearest screen gives your attention a softer place to land."],
+  ["Take five unhurried steps and notice each foot meeting the ground.","A simple movement can bring you back from replaying what has already happened."],
+  ["Sit quietly and listen for the farthest sound you can hear.","Listening carefully gives your mind a new task without asking it to solve anything."],
+  ["Tidy one tiny surface, such as a corner of your desk.","A small visible change can offer a sense of movement when your thoughts feel stuck."],
+  ["Open a curtain or adjust the light in your room.","Changing your surroundings, even slightly, can make this moment feel less repetitive."],
+  ["Put one item back where it belongs.","One completed, ordinary task can bring you into contact with the life around you."],
+  ["Straighten your pillow or fold the blanket beside you.","A little care for your space can make the present feel more welcoming."],
+  ["Find one thing in your room that makes you smile and look at it for a moment.","Your attention is allowed to visit something lovely, even while a question remains unanswered."],
+  ["Water a plant or check whether its soil feels dry.","Caring for something living offers a quiet reminder that attention can be gentle and practical."],
+  ["Wipe a small section of your desk or table.","A few seconds of visible progress can interrupt the feeling that nothing is moving."],
+  ["Step into a different room and notice one thing you hadn’t noticed before.","A new viewpoint can loosen the feeling of being trapped in one thought."],
+  ["Arrange three objects on your desk in a way you like.","Making one small choice for yourself can return a little colour to an ordinary moment."],
+  ["Open a window if it’s comfortable and safe to do so.","A small shift in your surroundings can invite your attention beyond your current worries."],
+  ["Put away one item you’ve been meaning to move.","You don’t need to organise your whole life to make one corner feel lighter."],
+  ["Look around and choose one colour; find three things that share it.","A simple search gives your mind something concrete to discover right here."],
+  ["Write the thought that’s repeating in your head on a piece of paper.","A thought outside your head can feel easier to look at without following it everywhere."],
+  ["Finish this sentence: ‘Right now, I’m feeling…’","Naming a feeling can help you acknowledge it without needing to justify it."],
+  ["Write down one thing you know for certain in this moment.","Separating what you know from what you wonder about can make uncertainty feel less tangled."],
+  ["Write the question you’ve been asking yourself, then leave it unanswered.","You can acknowledge a question without spending the whole afternoon trying to solve it."],
+  ["Make two short lists: ‘What I know’ and ‘What I’m imagining.’","The distinction can help you hold possibilities without mistaking them for facts."],
+  ["Write one sentence you wish someone understood about you.","Giving a feeling words can help you hear yourself more clearly."],
+  ["Name one thing you can influence today and one thing you cannot.","Your attention may feel less scattered when you can see where your choice begins and ends."],
+  ["Write down the first small thing you want to do after this moment.","A nearby next step can feel more reachable than an entire imagined future."],
+  ["Complete this sentence: ‘If I stopped trying to predict today, I would…’","The unfinished sentence lets you explore what you want beyond the need for certainty."],
+  ["Write a tiny note to your future self about how you’re feeling now.","Putting this moment into words can help you meet it with curiosity instead of judgment."],
+  ["List three things you can hear without trying to interpret them.","Sounds can simply be sounds, giving your mind a short rest from searching for meaning."],
+  ["Write down one thing that made today feel like yours.","Remembering a personal moment can bring your attention back to the life you’re already living."],
+  ["Ask yourself, ‘What am I feeling beneath the need to know?’","Sometimes the wish for an answer is carrying a quieter feeling that deserves attention too."],
+  ["Write one sentence beginning with ‘Maybe…’ and let it stay a possibility.","You can explore a thought without turning it into a prediction."],
+  ["Describe your current mood as weather in five words or fewer.","An image can help you express a feeling without needing to explain the whole story."],
+  ["Write down one thing you would tell a friend who felt exactly as you do.","A kinder perspective may become easier to recognise when you imagine offering it to someone else."],
+  ["Send a simple ‘You crossed my mind today. Hope you’re well’ to someone you genuinely want to contact.","A small, sincere connection can bring you into the present without requiring a particular response."],
+  ["Send a friend a photo of something small that made you smile.","Sharing an ordinary moment can make the day feel a little less solitary."],
+  ["Ask someone you trust, ‘What’s one nice thing about your day?’","Curiosity about another person’s world can offer a gentle break from your own mental loop."],
+  ["Send a thank-you message for something specific someone did.","Expressing appreciation gives a good moment a place in your actual relationships."],
+  ["Tell someone you love one small thing you appreciate about them.","Warmth becomes tangible when you give it a few honest words."],
+  ["Reply to one friendly message you’ve been meaning to answer.","A small connection can be easier to approach than the pile of conversations in your mind."],
+  ["Share a song with someone who might enjoy it.","Music can become a little bridge between your world and someone else’s."],
+  ["Ask a friend what they’ve been reading, watching, or listening to lately.","A fresh conversation gives your curiosity somewhere new to go."],
+  ["Send someone a simple goodnight or good-morning message, if it feels natural.","Small gestures can carry warmth without needing to become anything more."],
+  ["Think of someone who has been kind to you and silently wish them well.","Remembering kindness can soften the moment without requiring anything from the other person."],
+  ["Make a warm drink and notice its aroma before the first sip.","A familiar comfort can turn an abstract, worrying moment into a sensory one."],
+  ["Play one song you loved before your current worry took up so much space.","An old favourite can reconnect you with parts of yourself beyond the thing you’re thinking about."],
+  ["Wrap yourself in a blanket or put on something comfortable.","Physical comfort can make room for a feeling without requiring you to fix it."],
+  ["Read one page of a book you enjoy.","A small visit to another world can give your thoughts a gentle pause."],
+  ["Look through your photos and choose one that holds a sweet memory.","Remembering a good moment can remind you that your life contains more than today’s uncertainty."],
+  ["Sit near a window with your favourite song playing softly.","A little music and a change of view can make space around a crowded mind."],
+  ["Draw a cloud, a flower, or a tiny star on scrap paper.","Making something without a purpose gives your attention permission to wander somewhere playful."],
+  ["Read a poem or a few lines that have stayed with you.","Someone else’s carefully chosen words may help you sit beside a feeling without rushing it away."],
+  ["Choose a familiar scent nearby and notice it for a few seconds.","A sensory detail can bring you back to what is present rather than what might happen."],
+  ["Sit somewhere comfortable and let yourself do absolutely nothing for one minute.","Not every quiet moment needs to become another opportunity to improve yourself."],
+  ["Make a tiny playlist of three songs for the mood you’re in.","Giving your mood a soundtrack can help you acknowledge it without letting it define the whole day."],
+  ["Look at an old photo of yourself and notice one thing you like about that version of you.","You can remember who you were with tenderness while making room for who you are now."],
+  ["Write a small fictional blessing for yourself, as if it were a line in a story.","Imagination can offer comfort without requiring you to believe that the future has already been decided."],
+  ["Watch the light in your room for a minute and notice how it falls on one object.","An ordinary detail can become interesting when you let yourself look without searching for a message."],
+  ["Choose a tiny task you’ve been postponing and work on it for two minutes.","Beginning briefly can feel more manageable than waiting until you have the energy to finish everything."],
+  ["Put your phone face down and spend one minute with your surroundings.","A short pause from incoming information gives your own experience some room."],
+  ["Step outside, if it’s safe and comfortable, and notice the air on your skin.","A direct encounter with your surroundings can interrupt the feeling of living entirely inside your thoughts."],
+  ["Make a list of three ordinary things you are looking forward to.","Anticipation doesn’t have to depend on one big wish; small pleasures belong to the future too."],
+  ["Choose one object nearby and describe it as if you’ve never seen it before.","Curiosity can make the familiar feel new without needing the universe to change anything."],
+  ["Write down one thing you can leave unfinished for now.","Giving yourself permission to pause can loosen the pressure to resolve every thought immediately."],
+  ["Take a minute to notice what you need most right now: rest, movement, connection, or quiet.","Checking in with yourself can help you respond to the present instead of reacting to every possibility."],
+  ["Look at the sky, even if all you can see is a small patch.","Wonder doesn’t require a perfect view or an explanation for why you looked up."],
+  ["Choose one small thing to do slowly instead of rushing through it.","A little attention to the ordinary can make the present feel less like something you’re trying to get past."],
+  ["Whisper, ‘I don’t have to figure this out in the next five minutes.’","A little distance from urgency can help you meet the question more gently."],
+  ["Before returning to what you were doing, notice one thing that feels different from when you started.","The shift may be tiny, but noticing it reminds you that a moment can change without every question being answered."]
+];
+const $=id=>document.getElementById(id);
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function deck(list){let d=[];return()=>{if(!d.length)d=shuffle(list);return d.pop()}}
+function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+// build wheel
+(function(){
+  const g=$("wheel"),r=150,n=SEGS.length,step=360/n;
+  const pt=(a,rad)=>[(rad*Math.sin(a*Math.PI/180)).toFixed(2),(-rad*Math.cos(a*Math.PI/180)).toFixed(2)];
+  let h="";
+  SEGS.forEach((s,i)=>{
+    const a0=i*step,a1=(i+1)*step,p0=pt(a0,r),p1=pt(a1,r);
+    h+=`<path d="M0 0L${p0[0]} ${p0[1]}A${r} ${r} 0 0 1 ${p1[0]} ${p1[1]}Z" fill="var(${s[1]})" stroke="var(--bg)" stroke-width="3"/>`;
+    h+=`<text transform="rotate(${a0+step/2}) translate(0 -100)" text-anchor="middle" dominant-baseline="middle" style="fill:var(--ink)" font-family="Marcellus,Georgia,serif" font-size="${s[0].length>3?15:20}">${s[0]}</text>`;
+  });
+  g.innerHTML=h;
+})();
+let rot=0,spinning=false;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+$("spin").onclick=()=>{
+  if(spinning)return;
+  spinning=true;$("spin").disabled=true;$("answer").textContent="";
+  rot+=1440+Math.floor(Math.random()*360);
+  $("wheelsvg").style.transform=`rotate(${rot}deg)`;
+  buzz(30);
+  setTimeout(()=>{
+    const ang=(360-(rot%360))%360;
+    const seg=SEGS[Math.floor(ang/(360/SEGS.length))][0];
+    $("answer").textContent=seg==="Ask again"?"Ask again":seg;
+    buzz([40,40,40]);
+    spinning=false;$("spin").disabled=false;
+  },reduce?700:4300);
+};
+const nextQuote=deck(QUOTES),nextAct=deck(ACTS);
+let curQuote="",curAct="";
+function share(text,toastId){
+  const t=text+"\n\n— from whimsically yours";
+  if(navigator.share){navigator.share({text:t}).catch(()=>{});return}
+  try{navigator.clipboard.writeText(t).then(()=>{$(toastId).textContent="Copied to clipboard."},()=>{$(toastId).textContent="Couldn’t copy. Select the text instead."})}
+  catch(e){$(toastId).textContent="Couldn’t copy. Select the text instead."}
+}
+$("newQuote").onclick=()=>{curQuote=nextQuote();$("quote").textContent=curQuote;$("toast1").textContent="";buzz(15)};
+$("shareQuote").onclick=()=>{if(!curQuote){$("toast1").textContent="Get a line first, then share it.";return}share(curQuote,"toast1")};
+$("reveal").onclick=()=>{
+  const a=nextAct();curAct=a[0];
+  $("mysteryPanel").innerHTML=`<p class="todo"></p><p class="why"></p>`;
+  $("mysteryPanel").children[0].textContent=a[0];
+  $("mysteryPanel").children[1].textContent="Why this: "+a[1];
+  $("reveal").textContent="Reveal another";$("shareAct").hidden=false;$("toast2").textContent="";buzz(15);
+};
+$("shareAct").onclick=()=>share("Right now: "+curAct,"toast2");
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==="tab-"+b.dataset.tab));
+});
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch((error) => {
+      console.warn("Offline support could not be registered:", error);
+    });
+  });
+}
+</script>
+
+</body>
+</html>
